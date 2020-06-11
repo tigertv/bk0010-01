@@ -1,0 +1,8 @@
+build/
+Rom/
+roms/
+games/
+info/
+src/.vscode
+old/
+.vscode/

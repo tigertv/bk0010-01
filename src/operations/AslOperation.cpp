@@ -1,0 +1,48 @@
+ /*
+ * This file is part of the bk-0010-01 (https://github.com/tigertv/bk-0010-01).
+ * Copyright (c) 2020 Max Vetrov(tigertv).
+ * 
+ * This program is free software: you can redistribute it and/or modify  
+ * it under the terms of the GNU General Public License as published by  
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include "AslOperation.h"
+#include <iostream>
+
+AslOperation::AslOperation(Processor* processor) : OneOperandOperation(processor) {
+
+}
+
+void AslOperation::execute() {
+    std::cout << "ASL OPERATION" << std::endl;
+    decode();
+    
+    uint16_t result = readWrite->readWord(address);
+	uint16_t highBit = result >> 15;
+	result <<= 1;
+	readWrite->writeWord(address, result);
+
+	if (highBit != (result >> 15)) {
+		processor->setBitV();
+	} else {
+		processor->clearBitV();
+	}
+	
+	if (highBit == 0) {
+		processor->clearBitC();
+	} else {
+		processor->setBitC();
+	}
+
+	checkNZ(result);
+}
